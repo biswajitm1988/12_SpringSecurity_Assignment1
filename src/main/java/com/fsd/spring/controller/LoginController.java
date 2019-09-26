@@ -6,10 +6,9 @@ import com.fsd.spring.repository.impl.UserRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
@@ -23,16 +22,13 @@ public class LoginController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping({"/","/index"})
-    public ModelAndView index() throws IOException {
+    @RequestMapping(value={"/","/index"}, method = {RequestMethod.POST,RequestMethod.GET})
+    public ModelAndView index(@RequestParam(value = "auth", required = false) String auth, Model model) throws IOException {
         System.out.println("Login Controller index");
+        if(!StringUtils.isEmpty(auth) && "failure".equalsIgnoreCase(auth)){
+            model.addAttribute("failureMessage","Bad Credential. Login Failed");
+        }
         return new ModelAndView("login");
-    }
-
-    @RequestMapping(value="/doLogin", method = {RequestMethod.POST,RequestMethod.GET})
-    public String doLogin() throws IOException {
-        System.out.println("Login Controller home");
-        return "doLogin";
     }
 
     @GetMapping("/home")
@@ -48,10 +44,15 @@ public class LoginController {
     }
 
     @PostMapping("/registerUser")
-    public ModelAndView registerUser(User user) throws IOException {
+    public ModelAndView registerUser(Model model, User user) {
         System.out.println("Login Controller registerUser");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+            model.addAttribute("successMessage","User Registered");
+        }catch(Exception e){
+            model.addAttribute("failureMessage","User Registration Failed");
+        }
         return new ModelAndView("login");
     }
 
