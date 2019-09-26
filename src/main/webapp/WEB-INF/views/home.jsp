@@ -32,7 +32,7 @@
         </sec:authorize>
         <sec:authorize access="hasRole('PRINCIPAL')">
             <tr>
-                <td><a href="javascript:hasRole('delSub')" class="button">Delete a Subject</a></td>
+                <td><a href="javascript:showDiv('delSub')" class="button">Delete a Subject</a></td>
             </tr>
         </sec:authorize>
         <sec:authorize access="hasRole('LIBRARIAN')">
