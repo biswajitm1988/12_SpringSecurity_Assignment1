@@ -1,8 +1,10 @@
 package com.fsd.spring.controller;
 
 import com.fsd.spring.entity.User;
+import com.fsd.spring.entity.UserRole;
 import com.fsd.spring.repository.UserRepository;
 import com.fsd.spring.repository.impl.UserRepositoryImpl;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,9 @@ public class LoginController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SessionFactory sessionFactory;
+
     @RequestMapping(value={"/","/index"}, method = {RequestMethod.POST,RequestMethod.GET})
     public ModelAndView index(@RequestParam(value = "auth", required = false) String auth, Model model) throws IOException {
         System.out.println("Login Controller index");
@@ -32,8 +37,9 @@ public class LoginController {
     }
 
     @GetMapping("/home")
-    public ModelAndView home() throws IOException {
+    public ModelAndView home(User user, Model model) throws IOException {
         System.out.println("Login Controller home");
+        model.addAttribute("user", user);
         return new ModelAndView("home");
     }
 
@@ -45,9 +51,10 @@ public class LoginController {
 
     @PostMapping("/registerUser")
     public ModelAndView registerUser(Model model, User user) {
-        System.out.println("Login Controller registerUser");
+        System.out.println("Login Controller registerUser >> "+user);
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            //user.setUserRole(sessionFactory.getCurrentSession().get(UserRole.class,user.get));
             userRepository.save(user);
             model.addAttribute("successMessage","User Registered");
         }catch(Exception e){

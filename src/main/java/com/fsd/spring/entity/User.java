@@ -4,8 +4,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "USER")
@@ -21,11 +19,11 @@ public class User implements Serializable {
     @NotEmpty
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "USER_ROLE",
-            joinColumns = {@JoinColumn(name = "USER_ID")},
-            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
-    private Set<UserRole> userRoles = new HashSet<>();
+    @OneToOne(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name="USER_ROLE",
+            joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
+            inverseJoinColumns={@JoinColumn(name="ROLE_ID", referencedColumnName="ID")})
+    private UserRole userRole;
 
 
     public Integer getId() {
@@ -52,12 +50,21 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Set<UserRole> getUserRoles() {
-        return userRoles;
+    public UserRole getUserRole() {
+        return userRole;
     }
 
-    public void setUserRoles(Set<UserRole> userRoles) {
-        this.userRoles = userRoles;
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", userRoles=" + userRole +
+                '}';
+    }
 }

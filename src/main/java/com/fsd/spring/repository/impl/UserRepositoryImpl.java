@@ -3,8 +3,9 @@ package com.fsd.spring.repository.impl;
 import com.fsd.spring.entity.User;
 import com.fsd.spring.repository.UserRepository;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +16,14 @@ import java.util.Optional;
 @Transactional
 public class UserRepositoryImpl implements UserRepository {
 
+    private static final Logger log = LoggerFactory.getLogger(UserRepositoryImpl.class);
+
     @Autowired
     private SessionFactory sessionFactory;
 
     @Override
     public User getUserByUsername(String username) {
+        log.debug("getUserByUsername >> "+username);
         Query<User> query = sessionFactory.getCurrentSession().createQuery("FROM User u where u.username=:username", User.class);
         query.setParameter("username", username);
         return query.uniqueResult();
@@ -27,6 +31,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
+        log.debug("save called for >> "+user);
         sessionFactory.getCurrentSession().save(user);
         return user;
     }

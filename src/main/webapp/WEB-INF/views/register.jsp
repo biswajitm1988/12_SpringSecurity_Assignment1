@@ -9,7 +9,7 @@
 <%@include file="includeCommonHeader.html" %>
 
 <div align="center">
-    <form action="registerUser" method="post">
+    <form action="registerUser" path="user" method="post">
         <table>
             <tr>
                 <th colspan="2">
@@ -29,8 +29,8 @@
             <tr>
                 <td>Select Role</td>
                 <td>
-                    <input type="radio" name="role_id" value="1">Librarian
-                    <input type="radio" name="role_id" value="2">Principal
+                    <input type="radio" name="userRole.name" value="ROLE_LIBRARIAN">Librarian
+                    <input type="radio" name="userRole.name" value="ROLE_PRINCIPAL">Principal
                 </td>
             </tr>
 

@@ -1,14 +1,19 @@
 package com.fsd.spring.model;
 
 import com.fsd.spring.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class UserServiceDetails implements UserDetails {
+    private static final Logger log = LoggerFactory.getLogger(UserServiceDetails.class);
     private User user;
 
     public UserServiceDetails(User user) {
@@ -17,7 +22,11 @@ public class UserServiceDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getUserRoles().stream().map(userRole -> new SimpleGrantedAuthority(userRole.getName().toString())).collect(Collectors.toList());
+        log.debug("User >>>>>>> "+user);
+        System.out.println("User >>>>>>> "+user);
+        return  Stream.of(new SimpleGrantedAuthority(user.getUserRole().getName().toString()))
+                .collect(Collectors.toList());
+
     }
 
     public int getId() {
